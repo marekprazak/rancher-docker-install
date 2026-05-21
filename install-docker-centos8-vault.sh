@@ -1,10 +1,10 @@
 #!/bin/sh
-exec >/var/log/rancher-docker-install-wrapper.log 2>&1
+exec >/tmp/rancher-docker-install-wrapper.log 2>&1
 set -eux
 
-rm -f /etc/yum.repos.d/*.repo
+sudo rm -f /etc/yum.repos.d/*.repo
 
-cat >/etc/yum.repos.d/centos-vault.repo <<'EOF'
+sudo tee /etc/yum.repos.d/centos-vault.repo >/dev/null <<'EOF'
 [baseos]
 name=CentOS-8.5.2111 BaseOS
 baseurl=http://vault.centos.org/8.5.2111/BaseOS/x86_64/os/
@@ -24,9 +24,9 @@ enabled=1
 gpgcheck=0
 EOF
 
-dnf clean all
-dnf install -y yum-utils device-mapper-persistent-data lvm2
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-dnf install -y docker-ce-20.10.24 docker-ce-cli-20.10.24 containerd.io --setopt=install_weak_deps=False
-systemctl enable --now docker
+sudo dnf clean all
+sudo dnf install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf install -y docker-ce-20.10.24 docker-ce-cli-20.10.24 containerd.io --setopt=install_weak_deps=False
+sudo systemctl enable --now docker
 docker --version
