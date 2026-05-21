@@ -24,15 +24,12 @@ gpgcheck=0
 EOF
 
 dnf clean all
-dnf makecache
 
 dnf install -y yum-utils device-mapper-persistent-data lvm2
 
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-dnf install -y docker-ce-20.10.24 docker-ce-cli-20.10.24 containerd.io
+dnf install -y docker-ce-20.10.24 docker-ce-cli-20.10.24 containerd.io --setopt=install_weak_deps=False
 
-systemctl enable docker
-systemctl start docker
-
+systemctl enable --now docker
 docker --version
