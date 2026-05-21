@@ -1,9 +1,10 @@
+sudo tee /tmp/install-wrapper.sh > /dev/null <<'EOF'
 #!/bin/sh
 set -eux
 
 rm -f /etc/yum.repos.d/*.repo
 
-cat >/etc/yum.repos.d/centos-vault.repo <<'EOF'
+cat >/etc/yum.repos.d/centos-vault.repo <<'EOR'
 [baseos]
 name=CentOS-8.5.2111 BaseOS
 baseurl=http://vault.centos.org/8.5.2111/BaseOS/x86_64/os/
@@ -21,7 +22,7 @@ name=CentOS-8.5.2111 Extras
 baseurl=http://vault.centos.org/8.5.2111/extras/x86_64/os/
 enabled=1
 gpgcheck=0
-EOF
+EOR
 
 dnf clean all
 
@@ -32,4 +33,6 @@ yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce
 dnf install -y docker-ce-20.10.24 docker-ce-cli-20.10.24 containerd.io --setopt=install_weak_deps=False
 
 systemctl enable --now docker
+
 docker --version
+EOF
