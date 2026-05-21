@@ -1,15 +1,33 @@
 #!/bin/bash
-set -e
+set -euxo pipefail
 
-echo "[INFO] Fixing CentOS 8 repositories to vault.centos.org"
+exec > >(tee /tmp/rancher-docker-install-wrapper.log) 2>&1
 
-sed -i 's|mirrorlist=|#mirrorlist=|g' /etc/yum.repos.d/CentOS-*
-sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
-sed -i 's|#baseurl=https://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+cat >/etc/yum.repos.d/CentOS-Linux-BaseOS.repo <<'EOF'
+[baseos]
+name=CentOS Linux 8.5.2111 - BaseOS
+baseurl=http://vault.centos.org/8.5.2111/BaseOS/x86_64/os/
+enabled=1
+gpgcheck=0
+EOF
+
+cat >/etc/yum.repos.d/CentOS-Linux-AppStream.repo <<'EOF'
+[appstream]
+name=CentOS Linux 8.5.2111 - AppStream
+baseurl=http://vault.centos.org/8.5.2111/AppStream/x86_64/os/
+enabled=1
+gpgcheck=0
+EOF
+
+cat >/etc/yum.repos.d/CentOS-Linux-Extras.repo <<'EOF'
+[extras]
+name=CentOS Linux 8.5.2111 - Extras
+baseurl=http://vault.centos.org/8.5.2111/extras/x86_64/os/
+enabled=1
+gpgcheck=0
+EOF
 
 dnf clean all
 dnf makecache -y
-
-echo "[INFO] Running Rancher Docker installer"
 
 curl -fsSL https://releases.rancher.com/install-docker/20.10.sh | sh
