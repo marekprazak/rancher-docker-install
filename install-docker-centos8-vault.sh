@@ -1,7 +1,8 @@
-#!/bin/bash
-set -euxo pipefail
+#!/bin/sh
+set -eux
 
-exec > >(tee /tmp/rancher-docker-install-wrapper.log) 2>&1
+LOG=/tmp/rancher-docker-install-wrapper.log
+exec > $LOG 2>&1
 
 cat >/etc/yum.repos.d/CentOS-Linux-BaseOS.repo <<'EOF'
 [baseos]
