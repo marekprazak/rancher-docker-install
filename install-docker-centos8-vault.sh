@@ -1,4 +1,5 @@
 #!/bin/sh
+exec >/var/log/rancher-docker-install-wrapper.log 2>&1
 set -eux
 
 rm -f /etc/yum.repos.d/*.repo
