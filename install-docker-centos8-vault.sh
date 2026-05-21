@@ -1,34 +1,45 @@
 #!/bin/sh
 set -eux
 
-LOG=/tmp/rancher-docker-install-wrapper.log
-exec > $LOG 2>&1
+rm -f /etc/yum.repos.d/*openlogic*
 
-cat >/etc/yum.repos.d/CentOS-Linux-BaseOS.repo <<'EOF'
+cat >/etc/yum.repos.d/centos-vault.repo <<'EOF'
 [baseos]
-name=CentOS Linux 8.5.2111 - BaseOS
+name=CentOS-8.5.2111 BaseOS
 baseurl=http://vault.centos.org/8.5.2111/BaseOS/x86_64/os/
 enabled=1
 gpgcheck=0
-EOF
 
-cat >/etc/yum.repos.d/CentOS-Linux-AppStream.repo <<'EOF'
 [appstream]
-name=CentOS Linux 8.5.2111 - AppStream
+name=CentOS-8.5.2111 AppStream
 baseurl=http://vault.centos.org/8.5.2111/AppStream/x86_64/os/
 enabled=1
 gpgcheck=0
-EOF
 
-cat >/etc/yum.repos.d/CentOS-Linux-Extras.repo <<'EOF'
 [extras]
-name=CentOS Linux 8.5.2111 - Extras
+name=CentOS-8.5.2111 Extras
 baseurl=http://vault.centos.org/8.5.2111/extras/x86_64/os/
 enabled=1
 gpgcheck=0
 EOF
 
 dnf clean all
-dnf makecache -y
+dnf makecache
 
-curl -fsSL https://releases.rancher.com/install-docker/20.10.sh | sh
+dnf install -y \
+  yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+
+yum-config-manager --add-repo \
+  https://download.docker.com/linux/centos/docker-ce.repo
+
+dnf install -y \
+  docker-ce-20.10.* \
+  docker-ce-cli-20.10.* \
+  containerd.io
+
+systemctl enable docker
+systemctl start docker
+
+docker --version
