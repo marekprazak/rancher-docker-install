@@ -26,11 +26,22 @@ EOF
 
 sudo dnf clean all
 
-sudo dnf install -y yum-utils device-mapper-persistent-data lvm2
+sudo dnf install -y \
+  --setopt=timeout=30 \
+  --setopt=retries=2 \
+  yum-utils \
+  device-mapper-persistent-data \
+  lvm2
 
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-sudo dnf install -y docker-ce-20.10.24 docker-ce-cli-20.10.24 containerd.io --setopt=install_weak_deps=False
+sudo dnf install -y \
+  --setopt=timeout=30 \
+  --setopt=retries=2 \
+  --setopt=install_weak_deps=False \
+  docker-ce-20.10.24 \
+  docker-ce-cli-20.10.24 \
+  containerd.io
 
 sudo systemctl enable --now docker
 
