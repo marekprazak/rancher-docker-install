@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eux
 
-rm -f /etc/yum.repos.d/*openlogic*
+rm -f /etc/yum.repos.d/*.repo
 
 cat >/etc/yum.repos.d/centos-vault.repo <<'EOF'
 [baseos]
@@ -26,18 +26,11 @@ EOF
 dnf clean all
 dnf makecache
 
-dnf install -y \
-  yum-utils \
-  device-mapper-persistent-data \
-  lvm2
+dnf install -y yum-utils device-mapper-persistent-data lvm2
 
-yum-config-manager --add-repo \
-  https://download.docker.com/linux/centos/docker-ce.repo
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-dnf install -y \
-  docker-ce-20.10.* \
-  docker-ce-cli-20.10.* \
-  containerd.io
+dnf install -y docker-ce-20.10.24 docker-ce-cli-20.10.24 containerd.io
 
 systemctl enable docker
 systemctl start docker
